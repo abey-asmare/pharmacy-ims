@@ -15,31 +15,28 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
+backend/.Python
+backend/develop-eggs/
+backend/downloads/
+backend/eggs/
+backend/.eggs/
+backend/lib/
+backend/lib64/
+backend/parts/
+backend/sdist/
+backend/var/
+backend/wheels/
+/share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
 
 # Virtual envs
-.venv/
-venv/
-ENV/
-env/
-.python-version
+backend/.venv/
+backend/venv/
+backend/ENV/
+backend/env/
 
 # Testing & coverage
 .pytest_cache/
@@ -74,11 +71,15 @@ node_modules/
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+*.tsbuildinfo
+.swc/
+.vercel/
+.pnpm-store/
 
 # Build outputs
+build/
 dist/
 dist-ssr/
-build/
 out/
 .next/
 .nuxt/
@@ -106,13 +107,17 @@ lerna-debug.log*
 # Databases / Local data volumes
 *.sqlite
 *.sqlite3
+*.sqlite-wal
+*.sqlite-shm
 *.db
 *.db-journal
+*.db-wal
+*.db-shm
 postgres-data/
 pgdata/
 redis-data/
 
-# Docker  (keep compose files, ignore local overrides)
+# Docker (keep compose files, ignore local overrides)
 docker-compose.override.yml
 docker-compose.*.local.yml
 *.local.yml
@@ -146,3 +151,8 @@ tmp/
 temp/
 *.bak
 *.orig
+
+# Lockfiles / pinned interpreter must be committed (safety net)
+!uv.lock
+!.python-version
+!package-lock.json
