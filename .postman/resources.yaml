@@ -1,0 +1,7 @@
+# Use this workspace to collaborate
+workspace:
+  id: 4e693aaf-4a8d-4eee-8fbe-519a85b0d038
+
+localResources:
+  collections:
+    - ../docs/pharmacy-ims-auth.postman_collection.json

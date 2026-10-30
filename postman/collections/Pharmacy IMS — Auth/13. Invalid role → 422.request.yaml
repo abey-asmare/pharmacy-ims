@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{base_url}}/users"
+method: POST
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+body:
+  type: text
+  content: |-
+    {
+      "full_name": "Bad User",
+      "email": "bad@x.com",
+      "password": "BadPass12",
+      "role": "superuser"
+    }
+order: 13000

@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{base_url}}/users/{{user_id}}/role"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+body:
+  type: text
+  content: |-
+    {
+      "role": "clinic_staff"
+    }
+order: 7000

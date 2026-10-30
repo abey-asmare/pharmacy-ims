@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/users"
+method: GET
+headers:
+  Authorization: Bearer {{staff_token}}
+order: 10000

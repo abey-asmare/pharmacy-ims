@@ -1,0 +1,7 @@
+$kind: collection
+description: Auth + Users endpoints for the Pharmacy IMS backend.
+variables:
+  base_url: http://localhost:8000/api/v1
+  token: ""
+  staff_token: ""
+  user_id: ""

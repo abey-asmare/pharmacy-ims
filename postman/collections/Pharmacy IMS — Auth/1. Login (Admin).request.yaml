@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{base_url}}/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "admin@pharmacy.example",
+      "password": "Admin@1234"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      if (pm.response.code === 200) {
+        pm.collectionVariables.set('token', pm.response.json().access_token);
+        console.log('Admin token saved');
+      }
+order: 1000

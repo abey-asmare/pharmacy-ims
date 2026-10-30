@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{base_url}}/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "jane@pharmacy.example",
+      "password": "StaffPass1"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      if (pm.response.code === 200) {
+        pm.collectionVariables.set('staff_token', pm.response.json().access_token);
+      }
+order: 9000

@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{base_url}}/users"
+method: POST
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+body:
+  type: text
+  content: |-
+    {
+      "full_name": "Dr. Girma",
+      "email": "girma@clinic.example",
+      "password": "ClinicPass1",
+      "role": "clinic_staff"
+    }
+order: 5000
