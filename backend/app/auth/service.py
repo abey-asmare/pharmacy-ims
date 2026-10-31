@@ -94,7 +94,8 @@ class AuthService:
 
         SDD 2.7 / Table 2.7: passwords stored only as salted hashes, and a
         limit on repeated failed log-ins. SDD 2.6 / Table 2.8: the account
-        must exist and be active.
+        must exist and be active. SRS §3.2.1: failed log-in attempts are
+        recorded.
         """
         user = self.db.execute(
             select(UserAccount).where(UserAccount.email == email.lower())
@@ -105,6 +106,16 @@ class AuthService:
         generic_error = AuthenticationError("Incorrect email or password.")
 
         if user is None:
+            # SRS §3.2.1: record the failure even when the email is unknown.
+            # user_id stays NULL; entity_id carries the attempted email so an
+            # Admin can spot enumeration attempts against one address.
+            self.audit.record(
+                None,
+                action="login_failed_unknown_email",
+                entity_type="auth",
+                entity_id=email.lower(),
+            )
+            self.db.commit()
             raise generic_error
 
         if user.locked_until and user.locked_until > datetime.now(timezone.utc):
@@ -116,19 +127,22 @@ class AuthService:
         if not user.is_active:
             raise AuthenticationError("This account has been deactivated.")
 
-        # --- THE FIX IS HERE ----------------------------------------------- #
-        # Before: this branch either did not raise, or the raise lived outside
-        # the `if`. The function therefore fell through to create_token even
-        # for a wrong password.
         if not SecurityService.verify_password(password, user.password_hash):
             user.failed_login_attempts += 1
             if user.failed_login_attempts >= settings.MAX_FAILED_LOGIN_ATTEMPTS:
                 user.locked_until = datetime.now(timezone.utc) + timedelta(
                     minutes=settings.LOCKOUT_MINUTES
                 )
+            # SRS §3.2.1 / FR-AUT-05: record the failure against the real user.
+            self.audit.record(
+                user,
+                action="login_failed",
+                entity_type="user_account",
+                entity_id=str(user.id),
+                details=f"attempt {user.failed_login_attempts}",
+            )
             self.db.commit()
-            raise generic_error                              # ← required exit
-        # ------------------------------------------------------------------- #
+            raise generic_error
 
         # Success: reset the failed-attempt counter and issue a token.
         user.failed_login_attempts = 0

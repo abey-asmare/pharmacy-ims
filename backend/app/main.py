@@ -11,7 +11,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.auth.router import auth_router, users_router
+from app.auth.router import auth_router, users_router, audit_router
 from app.core.config import get_settings
 from app.core.db import get_db
 from app.core.exceptions import DomainError
@@ -64,6 +64,7 @@ def health(db: Session = Depends(get_db)) -> dict:
 # --------------------------------------------------------------------- #
 app.include_router(auth_router, prefix=settings.API_V1_PREFIX)
 app.include_router(users_router, prefix=settings.API_V1_PREFIX)
+app.include_router(audit_router, prefix=settings.API_V1_PREFIX)
 
 # Other packages' routers (inventory, expiry_reorder, notification, clinic,
 # reporting) are added here by their owners as they're built — each one

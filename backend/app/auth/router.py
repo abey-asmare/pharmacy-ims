@@ -25,6 +25,10 @@ from app.auth.schemas import (
 )
 from app.auth.service import AuthService
 
+from sqlalchemy import select
+from app.auth.schemas import AuditLogResponse     
+from app.auth.service import AuditService          
+
 settings = get_settings()
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
@@ -92,3 +96,56 @@ def change_user_status(
     current_user: UserAccount = Depends(require_role(Role.PHARMACY_ADMIN)),
 ) -> UserAccount:
     return AuthService(db).set_active(user_id, body.is_active, current_user)
+
+
+# --------------------------------------------------------------------- #
+# /audit — UC-19, FR-AUT-06, Admin only
+# --------------------------------------------------------------------- #
+audit_router = APIRouter(prefix="/audit", tags=["audit"])
+
+
+@audit_router.get("", response_model=list[AuditLogResponse])
+def list_audit_log(
+    entity_type: str | None = None,
+    user_id: uuid.UUID | None = None,
+    limit: int = 100,
+    offset: int = 0,
+    db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_role(Role.PHARMACY_ADMIN)),
+) -> list[AuditLogResponse]:
+    """List audit entries, newest first. Admin only (FR-AUT-06).
+
+    Optional filters match the ones on AuditService.list_entries — an
+    Admin investigating a stock discrepancy can narrow to a single
+    entity_type ("batch", "purchase_order") or a single actor.
+    """
+    entries = AuditService(db).list_entries(
+        entity_type=entity_type,
+        user_id=user_id,
+        limit=limit,
+        offset=offset,
+    )
+
+    # Enrich with actor email — one extra query, not N+1, because we only
+    # look up the distinct set of user_ids that appear in this page.
+    user_ids = {e.user_id for e in entries if e.user_id is not None}
+    actor_emails: dict[uuid.UUID, str] = {}
+    if user_ids:
+        rows = db.execute(
+            select(UserAccount.id, UserAccount.email).where(UserAccount.id.in_(user_ids))
+        ).all()
+        actor_emails = {row.id: row.email for row in rows}
+
+    return [
+        AuditLogResponse(
+            id=e.id,
+            user_id=e.user_id,
+            actor_email=actor_emails.get(e.user_id) if e.user_id else None,
+            action=e.action,
+            entity_type=e.entity_type,
+            entity_id=e.entity_id,
+            details=e.details,
+            created_at=e.created_at,
+        )
+        for e in entries
+    ]

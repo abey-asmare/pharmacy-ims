@@ -49,3 +49,18 @@ class CurrentUser(BaseModel):
 
     id: uuid.UUID
     role: Role
+
+
+class AuditLogResponse(BaseModel):
+    """A single row of the audit log, for GET /audit (FR-AUT-06)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    user_id: uuid.UUID | None
+    actor_email: str | None      # populated by the router; None for unknown-email failures
+    action: str
+    entity_type: str
+    entity_id: str
+    details: str | None
+    created_at: datetime
