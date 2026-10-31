@@ -1,0 +1,7 @@
+$kind: collection
+name: Pharmacy IMS — Settings & Audit
+description: ""
+variables:
+  base_url: http://localhost:8000/api/v1
+  token: ""
+  staff_token: ""

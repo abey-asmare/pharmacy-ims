@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/audit"
+method: GET
+headers:
+  Authorization: Bearer {{staff_token}}
+order: 5000

@@ -1,0 +1,11 @@
+$kind: http-request
+name: "06. Invalid: non-int windows → 422"
+url: "{{base_url}}/settings/warning_windows"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+body:
+  type: text
+  content: '{"value": "sixty,ninety"}'
+order: 6000

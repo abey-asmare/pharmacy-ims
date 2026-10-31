@@ -1,0 +1,11 @@
+$kind: http-request
+name: "09. Invalid: unknown key → 422"
+url: "{{base_url}}/settings/warning_window"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+body:
+  type: text
+  content: '{"value": "90"}'
+order: 9000

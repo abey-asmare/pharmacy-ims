@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{base_url}}/settings/consumption_days"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+body:
+  type: text
+  content: '{"value": "30"}'
+order: 5000

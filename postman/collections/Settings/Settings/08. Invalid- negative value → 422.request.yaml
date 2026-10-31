@@ -1,0 +1,11 @@
+$kind: http-request
+name: "08. Invalid: negative value → 422"
+url: "{{base_url}}/settings/consumption_days"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+body:
+  type: text
+  content: '{"value": "-1"}'
+order: 8000

@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{base_url}}/settings/warning_windows"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+body:
+  type: text
+  content: '{"value": "90,60,30"}'
+order: 3000
